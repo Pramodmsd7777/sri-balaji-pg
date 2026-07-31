@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | Sri Balaji Men's PG</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<style>
+:root{--navy:#0B2545;--blue:#1E5FA8;--sky:#3B82F6;--amber:#F5A623;--bg:#F5F8FC;--ink:#16233B;--muted:#5B6B85;--line:#E1E9F5;--radius:14px;--shadow:0 10px 30px -10px rgba(11,37,69,.12);--green:#16A34A;--red:#DC2626;
+--font-display:'Sora',sans-serif;--font-body:'Inter',sans-serif;--font-mono:'IBM Plex Mono',monospace;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);}
+h1,h2,h3{font-family:var(--font-display);color:var(--navy);}
+a{text-decoration:none;color:inherit;}
+button{font-family:var(--font-body);cursor:pointer;}
+
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,var(--navy),var(--blue));padding:20px;}
+.login-card{background:#fff;border-radius:20px;padding:44px 38px;width:100%;max-width:380px;box-shadow:0 30px 60px -20px rgba(0,0,0,.4);}
+.login-logo{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--navy));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-family:var(--font-display);margin-bottom:18px;}
+.login-card h2{font-size:1.4rem;margin-bottom:6px;}
+.login-card p{color:var(--muted);font-size:.88rem;margin-bottom:26px;}
+label{font-size:.8rem;font-weight:600;color:var(--navy);margin-bottom:6px;display:block;}
+input,select{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:9px;font-family:var(--font-body);font-size:.9rem;background:#F8FAFD;margin-bottom:14px;}
+input:focus,select:focus{outline:none;border-color:var(--blue);background:#fff;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:9px;font-weight:600;font-size:.88rem;cursor:pointer;border:none;background:var(--blue);color:#fff;}
+.btn.amber{background:var(--amber);color:var(--navy);}
+.btn.outline{background:#fff;border:1.5px solid var(--line);color:var(--ink);}
+.btn.full{width:100%;}
+.login-hint{background:#EAF1FB;border-radius:10px;padding:12px 14px;font-size:.78rem;color:var(--blue);margin-top:6px;font-family:var(--font-mono);}
+.back-home{display:block;text-align:center;margin-top:20px;font-size:.82rem;color:var(--muted);}
+
+/* APP SHELL */
+#app{display:none;min-height:100vh;grid-template-columns:230px 1fr;}
+#app.show{display:grid;}
+.sidebar{background:var(--navy);color:#B9CBE8;padding:22px 16px;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.sidebar .brand{color:#fff;font-family:var(--font-display);font-weight:800;font-size:1rem;display:flex;gap:10px;align-items:center;padding:0 8px 22px;}
+.sidebar .brand .mark{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--amber));display:flex;align-items:center;justify-content:center;font-size:.8rem;color:#fff;}
+.nav-item{padding:11px 14px;border-radius:9px;font-size:.87rem;font-weight:500;margin-bottom:4px;cursor:pointer;display:flex;align-items:center;gap:10px;transition:all .15s;}
+.nav-item:hover{background:rgba(255,255,255,.06);color:#fff;}
+.nav-item.active{background:var(--blue);color:#fff;}
+.nav-section{font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;color:#6E85AC;margin:18px 8px 8px;font-weight:700;}
+
+.main{padding:26px 30px 60px;}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px;flex-wrap:wrap;gap:10px;}
+.topbar h1{font-size:1.4rem;}
+.topbar .role{font-size:.8rem;color:var(--muted);background:#fff;border:1px solid var(--line);padding:8px 14px;border-radius:999px;}
+
+.page{display:none;}
+.page.active{display:block;}
+
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+@media(max-width:900px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+.stat-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
+.stat-card .label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600;}
+.stat-card .val{font-family:var(--font-mono);font-size:1.5rem;color:var(--navy);margin-top:6px;}
+.stat-card .delta{font-size:.72rem;color:var(--green);font-weight:600;margin-top:4px;}
+
+.grid-2{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;margin-bottom:24px;}
+@media(max-width:1000px){.grid-2{grid-template-columns:1fr;}}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);}
+.card h3{font-size:1rem;margin-bottom:16px;}
+.card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:10px;}
+
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+th{text-align:left;color:var(--muted);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;padding:9px 10px;border-bottom:1.5px solid var(--line);white-space:nowrap;}
+td{padding:11px 10px;border-bottom:1px solid var(--line);white-space:nowrap;}
+tr:last-child td{border-bottom:none;}
+.table-wrap{overflow-x:auto;}
+.badge{display:inline-block;padding:4px 11px;border-radius:999px;font-size:.7rem;font-weight:700;}
+.badge.paid{background:#DCFCE7;color:var(--green);}
+.badge.due{background:#FEE2E2;color:var(--red);}
+.badge.open{background:#FEF3C7;color:#B45309;}
+.badge.progress{background:#DBEAFE;color:var(--blue);}
+.badge.resolved{background:#DCFCE7;color:var(--green);}
+.badge.occupied{background:#DBEAFE;color:var(--blue);}
+.badge.vacant{background:#DCFCE7;color:var(--green);}
+.badge.cleaning{background:#FEF3C7;color:#B45309;}
+.badge.maintenance{background:#FEE2E2;color:var(--red);}
+.icon-btn{background:none;border:1px solid var(--line);border-radius:7px;padding:5px 10px;font-size:.75rem;color:var(--blue);margin-right:4px;}
+.icon-btn.danger{color:var(--red);}
+.search-box{padding:10px 14px;border:1.5px solid var(--line);border-radius:9px;font-size:.85rem;min-width:220px;}
+
+.room-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:14px;}
+.room-block{border:1px solid var(--line);border-radius:12px;padding:14px;background:#F8FAFD;}
+.room-block .rnum{font-family:var(--font-mono);font-weight:700;color:var(--navy);margin-bottom:8px;font-size:.9rem;}
+.bed-row{display:flex;gap:6px;flex-wrap:wrap;}
+.bed-chip{font-size:.68rem;font-weight:700;padding:5px 8px;border-radius:6px;cursor:pointer;}
+.bed-chip.occupied{background:#DBEAFE;color:var(--blue);}
+.bed-chip.vacant{background:#DCFCE7;color:var(--green);}
+.bed-chip.cleaning{background:#FEF3C7;color:#B45309;}
+.bed-chip.maintenance{background:#FEE2E2;color:var(--red);}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(11,37,69,.5);z-index:2000;align-items:center;justify-content:center;padding:20px;}
+.modal-bg.show{display:flex;}
+.modal{background:#fff;border-radius:16px;padding:28px;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;}
+.modal h3{margin-bottom:18px;}
+.modal-actions{display:flex;gap:10px;margin-top:8px;}
+
+.report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media(max-width:800px){.report-grid{grid-template-columns:1fr;}}
+.report-card{border:1px solid var(--line);border-radius:12px;padding:18px;text-align:center;}
+.report-card .ic{font-size:1.6rem;margin-bottom:8px;}
+.notice-form{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.notice-form textarea{grid-column:span 2;padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;font-family:var(--font-body);font-size:.85rem;min-height:70px;}
+@media(max-width:600px){.notice-form{grid-template-columns:1fr;}.notice-form textarea{grid-column:span 1;}}
+.notice-item{border-left:3px solid var(--blue);padding:10px 14px;margin-bottom:12px;background:#F8FAFD;border-radius:0 8px 8px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+.notice-item b{font-size:.86rem;display:block;}
+.notice-item span{font-size:.74rem;color:var(--muted);}
+</style>
+</head>
+<body>
+
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">SB</div>
+    <h2>Admin Login</h2>
+    <p>Secure access for Admin &amp; Manager roles.</p>
+    <label>Username</label>
+    <input type="text" id="loginUser" value="admin">
+    <label>Password</label>
+    <input type="password" id="loginPass" value="admin123">
+    <label>Role</label>
+    <select id="loginRole"><option>Admin</option><option>Manager</option></select>
+    <button class="btn full" onclick="login()">Login</button>
+    <div class="login-hint">Demo credentials pre-filled. In production this calls POST /api/auth/admin/login and issues a JWT with role-based claims (ADMIN / MANAGER).</div>
+    <a href="index.html" class="back-home">← Back to homepage</a>
+  </div>
+</div>
+
+<div id="app">
+  <div class="sidebar">
+    <div class="brand"><div class="mark">SB</div> Admin Panel</div>
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" data-p="overview" onclick="nav(this,'overview')">📊 Dashboard</div>
+    <div class="nav-item" data-p="analytics" onclick="nav(this,'analytics')">📈 Analytics</div>
+    <div class="nav-section">Operations</div>
+    <div class="nav-item" data-p="tenants" onclick="nav(this,'tenants')">👥 Tenants</div>
+    <div class="nav-item" data-p="rooms" onclick="nav(this,'rooms')">🛏️ Rooms & Beds</div>
+    <div class="nav-item" data-p="payments" onclick="nav(this,'payments')">💳 Payments</div>
+    <div class="nav-item" data-p="complaints" onclick="nav(this,'complaints')">🛠️ Complaints</div>
+    <div class="nav-item" data-p="notices" onclick="nav(this,'notices')">📢 Notice Board</div>
+    <div class="nav-section">System</div>
+    <div class="nav-item" data-p="reports" onclick="nav(this,'reports')">📁 Reports</div>
+    <div class="nav-item" data-p="settings" onclick="nav(this,'settings')">⚙️ Settings</div>
+    <div class="nav-item" onclick="logout()">↩ Logout</div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <h1 id="pageTitle">Dashboard Overview</h1>
+      <span class="role">Logged in as <b id="roleLabel">Admin</b></span>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="page active" id="page-overview">
+      <div class="stat-grid">
+        <div class="stat-card"><div class="label">Total Beds</div><div class="val">150</div></div>
+        <div class="stat-card"><div class="label">Occupied Beds</div><div class="val">122</div><div class="delta">81.3% occupancy</div></div>
+        <div class="stat-card"><div class="label">Available Beds</div><div class="val">28</div></div>
+        <div class="stat-card"><div class="label">Monthly Revenue</div><div class="val">₹9.76L</div><div class="delta">+6.2% vs last month</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card"><h3>Revenue — Last 6 Months</h3><canvas id="revChart" height="130"></canvas></div>
+        <div class="card"><h3>Occupancy by Sharing Type</h3><canvas id="occChart" height="180"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Pending Payments</h3><span style="font-size:.8rem;color:var(--red);font-weight:600;">6 tenants · ₹47,500 pending</span></div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Tenant</th><th>Room/Bed</th><th>Amount</th><th>Due Date</th><th>Status</th></tr></thead>
+          <tbody id="pendingRows"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ANALYTICS -->
+    <div class="page" id="page-analytics">
+      <div class="grid-2">
+        <div class="card"><h3>Monthly Revenue vs Expense</h3><canvas id="revExpChart" height="150"></canvas></div>
+        <div class="card"><h3>Vacant vs Occupied</h3><canvas id="vacChart" height="180"></canvas></div>
+      </div>
+      <div class="card"><h3>Occupancy Trend (12 months)</h3><canvas id="trendChart" height="90"></canvas></div>
+    </div>
+
+    <!-- TENANTS -->
+    <div class="page" id="page-tenants">
+      <div class="card">
+        <div class="card-head">
+          <input class="search-box" id="tenantSearch" placeholder="Search by name, phone, room or bed..." oninput="renderTenants()">
+          <button class="btn amber" onclick="openModal('tenantModal')">+ Add Tenant</button>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Name</th><th>Phone</th><th>Room</th><th>Bed</th><th>Joining</th><th>Rent</th><th>Deposit</th><th>Status</th><th></th></tr></thead>
+          <tbody id="tenantRows"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- ROOMS -->
+    <div class="page" id="page-rooms">
+      <div class="card">
+        <div class="card-head"><h3>Room-wise Bed Management</h3><span style="font-size:.78rem;color:var(--muted)">Click a bed to cycle its status</span></div>
+        <div class="room-grid" id="roomGrid"></div>
+      </div>
+    </div>
+
+    <!-- PAYMENTS -->
+    <div class="page" id="page-payments">
+      <div class="card">
+        <div class="card-head"><h3>All Payments</h3>
+          <div style="display:flex;gap:8px;">
+            <button class="btn outline" onclick="alert('Filtering to paid payments only.')">Paid</button>
+            <button class="btn outline" onclick="alert('Filtering to pending payments only.')">Pending</button>
+          </div>
+        </div>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Tenant</th><th>Month</th><th>Amount</th><th>Method</th><th>Paid Date</th><th>Status</th><th>Receipt</th></tr></thead>
+          <tbody id="allPaymentRows"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- COMPLAINTS -->
+    <div class="page" id="page-complaints">
+      <div class="card">
+        <h3>Tenant Complaints</h3>
+        <div class="table-wrap"><table>
+          <thead><tr><th>Tenant</th><th>Issue</th><th>Room</th><th>Raised</th><th>Status</th><th>Assigned To</th><th></th></tr></thead>
+          <tbody id="complaintAdminRows"></tbody>
+        </table></div>
+      </div>
+    </div>
+
+    <!-- NOTICES -->
+    <div class="page" id="page-notices">
+      <div class="card">
+        <h3>Post a Notice</h3>
+        <div class="notice-form">
+          <input type="text" id="noticeTitle" placeholder="Notice title">
+          <select id="noticeCategory"><option>Holiday</option><option>Water Shutdown</option><option>Food Menu</option><option>Events</option><option>Maintenance</option></select>
+          <textarea id="noticeBody" placeholder="Notice details..."></textarea>
+        </div>
+        <button class="btn" onclick="postNotice()">Post Notice — Visible to All Tenants</button>
+        <div style="margin-top:22px;" id="adminNoticeList"></div>
+      </div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="page" id="page-reports">
+      <div class="card">
+        <h3>Generate Reports</h3>
+        <div class="report-grid">
+          <div class="report-card"><div class="ic">📊</div><b>Monthly Revenue Report</b><p style="font-size:.78rem;color:var(--muted);margin:6px 0 12px;">Room-wise rent collection for the month</p><button class="btn outline" onclick="alert('Downloads Monthly_Revenue_Report.xlsx')">Excel</button> <button class="btn outline" onclick="alert('Downloads Monthly_Revenue_Report.pdf')">PDF</button></div>
+          <div class="report-card"><div class="ic">👥</div><b>Tenant Directory</b><p style="font-size:.78rem;color:var(--muted);margin:6px 0 12px;">Full list with room, bed and contact info</p><button class="btn outline" onclick="alert('Downloads Tenant_Directory.xlsx')">Excel</button> <button class="btn outline" onclick="alert('Downloads Tenant_Directory.pdf')">PDF</button></div>
+          <div class="report-card"><div class="ic">🛏️</div><b>Occupancy Report</b><p style="font-size:.78rem;color:var(--muted);margin:6px 0 12px;">Bed-wise occupied/vacant breakdown</p><button class="btn outline" onclick="alert('Downloads Occupancy_Report.xlsx')">Excel</button> <button class="btn outline" onclick="alert('Downloads Occupancy_Report.pdf')">PDF</button></div>
+          <div class="report-card"><div class="ic">💰</div><b>Pending Dues Report</b><p style="font-size:.78rem;color:var(--muted);margin:6px 0 12px;">All tenants with outstanding balance</p><button class="btn outline" onclick="alert('Downloads Pending_Dues.xlsx')">Excel</button> <button class="btn outline" onclick="alert('Downloads Pending_Dues.pdf')">PDF</button></div>
+          <div class="report-card"><div class="ic">🧾</div><b>Yearly Income Statement</b><p style="font-size:.78rem;color:var(--muted);margin:6px 0 12px;">Full year income vs expense summary</p><button class="btn outline" onclick="alert('Downloads Yearly_Income.xlsx')">Excel</button> <button class="btn outline" onclick="alert('Downloads Yearly_Income.pdf')">PDF</button></div>
+          <div class="report-card"><div class="ic">🛠️</div><b>Complaints Log</b><p style="font-size:.78rem;color:var(--muted);margin:6px 0 12px;">All complaints with resolution time</p><button class="btn outline" onclick="alert('Downloads Complaints_Log.xlsx')">Excel</button> <button class="btn outline" onclick="alert('Downloads Complaints_Log.pdf')">PDF</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="page" id="page-settings">
+      <div class="card" style="max-width:480px;">
+        <h3>Hostel Capacity</h3>
+        <label>Total Beds in Hostel</label>
+        <input type="number" id="totalBedsInput" value="150">
+        <p style="font-size:.78rem;color:var(--muted);margin-bottom:14px;">This number drives the "Total Beds / Available Beds / Occupancy %" shown on the public homepage.</p>
+        <button class="btn" onclick="updateCapacity()">Save Capacity</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADD TENANT MODAL -->
+<div class="modal-bg" id="tenantModal">
+  <div class="modal">
+    <h3>Add New Tenant</h3>
+    <div class="form-grid">
+      <div><label>Full Name</label><input type="text" id="newName" placeholder="Tenant name"></div>
+      <div><label>Phone Number</label><input type="tel" id="newPhone" placeholder="10-digit mobile"></div>
+      <div><label>Room Number</label><input type="text" id="newRoom" placeholder="e.g. 205"></div>
+      <div><label>Bed Number</label><input type="text" id="newBed" placeholder="e.g. Bed 3"></div>
+      <div><label>Monthly Rent</label><input type="number" id="newRent" placeholder="8000"></div>
+      <div><label>Security Deposit</label><input type="number" id="newDeposit" placeholder="8000"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn full" onclick="addTenant()">Save Tenant</button>
+      <button class="btn outline full" onclick="closeModal('tenantModal')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function login(){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('app').classList.add('show');
+  document.getElementById('roleLabel').textContent=document.getElementById('loginRole').value;
+  renderAll();
+}
+function logout(){document.getElementById('app').classList.remove('show');document.getElementById('loginScreen').style.display='flex';}
+function nav(el,page){
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.getElementById('pageTitle').textContent=el.textContent.trim().replace(/^\S+\s/,'');
+}
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+
+let tenants=[
+  {name:'Arun Kumar',phone:'9876543210',room:'204',bed:'Bed 2',join:'12 Jan 2026',rent:8000,deposit:8000,status:'due'},
+  {name:'Praveen Singh',phone:'9876500001',room:'101',bed:'Bed 1',join:'02 Feb 2026',rent:9000,deposit:9000,status:'paid'},
+  {name:'Kiran Reddy',phone:'9876500002',room:'305',bed:'Bed 4',join:'18 Mar 2026',rent:7500,deposit:7500,status:'paid'},
+  {name:'Vishal Mehta',phone:'9876500003',room:'204',bed:'Bed 1',join:'05 Apr 2026',rent:8000,deposit:8000,status:'due'},
+  {name:'Naveen Thomas',phone:'9876500004',room:'410',bed:'Bed 5',join:'20 May 2026',rent:7000,deposit:7000,status:'paid'},
+  {name:'Ravi Teja',phone:'9876500005',room:'101',bed:'Bed 2',join:'11 Jun 2026',rent:9000,deposit:9000,status:'due'},
+];
+let complaints=[
+  {tenant:'Arun Kumar',issue:'WiFi issue',room:'204',date:'24 Jul 2026',status:'progress',assigned:'Tech Vendor'},
+  {tenant:'Kiran Reddy',issue:'Fan not working',room:'305',date:'20 Jul 2026',status:'open',assigned:'—'},
+  {tenant:'Ravi Teja',issue:'Water issue',room:'101',date:'15 Jul 2026',status:'resolved',assigned:'Plumber'},
+];
+let notices=[
+  {title:'Water Supply Shutdown',cat:'Water Shutdown',body:'Water unavailable 3 Aug, 10 AM–2 PM for tank cleaning.',date:'30 Jul 2026'},
+  {title:'Independence Day Holiday',cat:'Holiday',body:'Office closed 15 Aug. Emergency contact available.',date:'28 Jul 2026'},
+];
+let roomData=[
+  {room:'101',beds:[['Bed 1','occupied'],['Bed 2','occupied'],['Bed 3','vacant']]},
+  {room:'204',beds:[['Bed 1','occupied'],['Bed 2','occupied'],['Bed 3','cleaning'],['Bed 4','vacant']]},
+  {room:'305',beds:[['Bed 1','occupied'],['Bed 2','vacant'],['Bed 3','occupied'],['Bed 4','occupied']]},
+  {room:'410',beds:[['Bed 1','maintenance'],['Bed 2','occupied'],['Bed 3','occupied'],['Bed 4','vacant'],['Bed 5','occupied']]},
+];
+
+function renderAll(){
+  renderTenants();
+  renderRooms();
+  renderComplaintsAdmin();
+  renderNoticesAdmin();
+  renderPending();
+  renderAllPayments();
+  buildCharts();
+}
+
+function renderTenants(){
+  const q=(document.getElementById('tenantSearch')?.value||'').toLowerCase();
+  const filtered=tenants.filter(t=>[t.name,t.phone,t.room,t.bed].join(' ').toLowerCase().includes(q));
+  document.getElementById('tenantRows').innerHTML=filtered.map((t,i)=>`
+    <tr><td>${t.name}</td><td>${t.phone}</td><td>${t.room}</td><td>${t.bed}</td><td>${t.join}</td><td>₹${t.rent}</td><td>₹${t.deposit}</td>
+    <td><span class="badge ${t.status}">${t.status==='paid'?'Paid':'Due'}</span></td>
+    <td><button class="icon-btn" onclick="alert('Edit tenant: ${t.name}')">Edit</button><button class="icon-btn danger" onclick="removeTenant('${t.phone}')">Remove</button></td></tr>`).join('');
+}
+function addTenant(){
+  const name=document.getElementById('newName').value.trim();
+  const phone=document.getElementById('newPhone').value.trim();
+  if(!name||!phone){alert('Please enter name and phone number.');return;}
+  tenants.push({name,phone,room:document.getElementById('newRoom').value||'—',bed:document.getElementById('newBed').value||'—',
+    join:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'}),
+    rent:Number(document.getElementById('newRent').value)||0,deposit:Number(document.getElementById('newDeposit').value)||0,status:'due'});
+  renderTenants();closeModal('tenantModal');
+  ['newName','newPhone','newRoom','newBed','newRent','newDeposit'].forEach(id=>document.getElementById(id).value='');
+}
+function removeTenant(phone){tenants=tenants.filter(t=>t.phone!==phone);renderTenants();}
+
+function renderRooms(){
+  document.getElementById('roomGrid').innerHTML=roomData.map(r=>`
+    <div class="room-block"><div class="rnum">Room ${r.room}</div>
+    <div class="bed-row">${r.beds.map(b=>`<span class="bed-chip ${b[1]}" onclick="cycleBed('${r.room}','${b[0]}')">${b[0]}</span>`).join('')}</div></div>`).join('');
+}
+const statusCycle=['occupied','vacant','cleaning','maintenance'];
+function cycleBed(room,bed){
+  const r=roomData.find(x=>x.room===room);
+  const b=r.beds.find(x=>x[0]===bed);
+  b[1]=statusCycle[(statusCycle.indexOf(b[1])+1)%statusCycle.length];
+  renderRooms();
+}
+
+function renderComplaintsAdmin(){
+  document.getElementById('complaintAdminRows').innerHTML=complaints.map((c,i)=>`
+    <tr><td>${c.tenant}</td><td>${c.issue}</td><td>${c.room}</td><td>${c.date}</td>
+    <td><span class="badge ${c.status}">${c.status==='progress'?'In Progress':c.status.charAt(0).toUpperCase()+c.status.slice(1)}</span></td>
+    <td>${c.assigned}</td>
+    <td><button class="icon-btn" onclick="advanceComplaint(${i})">Advance</button></td></tr>`).join('');
+}
+function advanceComplaint(i){
+  const order=['open','progress','resolved'];
+  const cur=order.indexOf(complaints[i].status);
+  if(cur<order.length-1){complaints[i].status=order[cur+1];if(complaints[i].status==='progress'&&complaints[i].assigned==='—')complaints[i].assigned='Maintenance Staff';}
+  renderComplaintsAdmin();
+}
+
+function postNotice(){
+  const title=document.getElementById('noticeTitle').value.trim();
+  const body=document.getElementById('noticeBody').value.trim();
+  if(!title||!body){alert('Please fill in title and details.');return;}
+  notices.unshift({title,cat:document.getElementById('noticeCategory').value,body,date:new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})});
+  renderNoticesAdmin();
+  document.getElementById('noticeTitle').value='';document.getElementById('noticeBody').value='';
+}
+function renderNoticesAdmin(){
+  document.getElementById('adminNoticeList').innerHTML=notices.map((n,i)=>`
+    <div class="notice-item"><div><b>${n.title}</b><span>${n.body} · ${n.date}</span></div><button class="icon-btn danger" onclick="notices.splice(${i},1);renderNoticesAdmin();">Remove</button></div>`).join('');
+}
+
+function renderPending(){
+  const due=tenants.filter(t=>t.status==='due');
+  document.getElementById('pendingRows').innerHTML=due.map(t=>`
+    <tr><td>${t.name}</td><td>${t.room} / ${t.bed}</td><td>₹${t.rent}</td><td>05 Aug 2026</td><td><span class="badge due">Overdue</span></td></tr>`).join('');
+}
+function renderAllPayments(){
+  const rows=[
+    ['Praveen Singh','Jul 2026','₹9,000','UPI','03 Jul 2026','Paid','#'],
+    ['Kiran Reddy','Jul 2026','₹7,500','GPay','04 Jul 2026','Paid','#'],
+    ['Naveen Thomas','Jul 2026','₹7,000','Razorpay','02 Jul 2026','Paid','#'],
+    ['Arun Kumar','Jul 2026','₹8,000','—','—','Due','—'],
+    ['Vishal Mehta','Jul 2026','₹8,000','—','—','Due','—'],
+    ['Ravi Teja','Jul 2026','₹9,000','—','—','Due','—'],
+  ];
+  document.getElementById('allPaymentRows').innerHTML=rows.map(r=>`
+    <tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td>
+    <td><span class="badge ${r[5]==='Paid'?'paid':'due'}">${r[5]}</span></td>
+    <td>${r[6]==='#'?'<span class="icon-btn" onclick="alert(\'Downloads receipt\')">Download</span>':'—'}</td></tr>`).join('');
+}
+function updateCapacity(){alert('Total beds updated to '+document.getElementById('totalBedsInput').value+'. Homepage stats will now reflect this.');}
+
+function buildCharts(){
+  const grid='#E1E9F5', navy='#0B2545', blue='#1E5FA8', amber='#F5A623';
+  new Chart(document.getElementById('revChart'),{type:'bar',data:{labels:['Feb','Mar','Apr','May','Jun','Jul'],
+    datasets:[{label:'Revenue (₹)',data:[860000,895000,910000,930000,955000,976000],backgroundColor:blue,borderRadius:6}]},
+    options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:grid}},x:{grid:{display:false}}}}});
+  new Chart(document.getElementById('occChart'),{type:'doughnut',data:{labels:['2 Sharing','3 Sharing','4 Sharing','5 Sharing'],
+    datasets:[{data:[20,45,50,35],backgroundColor:[navy,blue,amber,'#8FB3DE']}]},options:{plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:10}}}}}});
+  new Chart(document.getElementById('revExpChart'),{type:'line',data:{labels:['Feb','Mar','Apr','May','Jun','Jul'],
+    datasets:[{label:'Revenue',data:[860000,895000,910000,930000,955000,976000],borderColor:blue,backgroundColor:'rgba(30,95,168,.1)',fill:true,tension:.35},
+    {label:'Expense',data:[210000,215000,220000,225000,230000,235000],borderColor:amber,backgroundColor:'rgba(245,166,35,.1)',fill:true,tension:.35}]},
+    options:{scales:{y:{grid:{color:grid}},x:{grid:{display:false}}}}});
+  new Chart(document.getElementById('vacChart'),{type:'pie',data:{labels:['Occupied','Vacant'],datasets:[{data:[122,28],backgroundColor:[blue,'#DCE6F5']}]},options:{plugins:{legend:{position:'bottom'}}}});
+  new Chart(document.getElementById('trendChart'),{type:'line',data:{labels:['Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'],
+    datasets:[{label:'Occupancy %',data:[70,72,75,74,78,79,80,82,81,83,80,81],borderColor:navy,backgroundColor:'rgba(11,37,69,.08)',fill:true,tension:.3,pointRadius:2}]},
+    options:{plugins:{legend:{display:false}},scales:{y:{min:60,max:100,grid:{color:grid}},x:{grid:{display:false}}}}});
+}
+</script>
+</body>
+</html>

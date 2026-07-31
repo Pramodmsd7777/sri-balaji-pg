@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tenant Portal | Sri Balaji Men's PG</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0B2545;--blue:#1E5FA8;--sky:#3B82F6;--amber:#F5A623;--bg:#F5F8FC;--ink:#16233B;--muted:#5B6B85;--line:#E1E9F5;--radius:14px;--shadow:0 10px 30px -10px rgba(11,37,69,.15);--green:#16A34A;--red:#DC2626;
+--font-display:'Sora',sans-serif;--font-body:'Inter',sans-serif;--font-mono:'IBM Plex Mono',monospace;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:var(--font-body);background:var(--bg);color:var(--ink);}
+h1,h2,h3{font-family:var(--font-display);color:var(--navy);}
+a{text-decoration:none;color:inherit;}
+
+/* LOGIN SCREEN */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,var(--navy),var(--blue));padding:20px;}
+.login-card{background:#fff;border-radius:20px;padding:44px 38px;width:100%;max-width:380px;box-shadow:0 30px 60px -20px rgba(0,0,0,.4);}
+.login-logo{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--blue),var(--navy));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-family:var(--font-display);margin-bottom:18px;}
+.login-card h2{font-size:1.4rem;margin-bottom:6px;}
+.login-card p{color:var(--muted);font-size:.88rem;margin-bottom:26px;}
+label{font-size:.8rem;font-weight:600;color:var(--navy);margin-bottom:6px;display:block;}
+input{width:100%;padding:13px 15px;border:1.5px solid var(--line);border-radius:10px;font-family:var(--font-body);font-size:.92rem;background:#F8FAFD;margin-bottom:16px;}
+input:focus{outline:none;border-color:var(--blue);background:#fff;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:10px;font-weight:600;font-size:.92rem;cursor:pointer;border:none;width:100%;background:var(--blue);color:#fff;transition:transform .15s;}
+.btn:hover{transform:translateY(-1px);}
+.login-hint{background:#EAF1FB;border-radius:10px;padding:12px 14px;font-size:.78rem;color:var(--blue);margin-top:18px;font-family:var(--font-mono);}
+.login-error{color:var(--red);font-size:.82rem;margin-top:-8px;margin-bottom:12px;display:none;}
+.back-home{display:block;text-align:center;margin-top:20px;font-size:.82rem;color:var(--muted);}
+
+/* DASHBOARD */
+#dashboard{display:none;min-height:100vh;}
+.topbar{background:#fff;border-bottom:1px solid var(--line);padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar .brand{font-family:var(--font-display);font-weight:800;color:var(--navy);display:flex;gap:10px;align-items:center;}
+.topbar .brand .mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--navy));color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;}
+.topbar-right{display:flex;align-items:center;gap:16px;}
+.logout-btn{font-size:.82rem;color:var(--muted);cursor:pointer;font-weight:600;}
+.wrap{max-width:1100px;margin:0 auto;padding:32px 24px 60px;}
+.welcome{margin-bottom:26px;}
+.welcome span{color:var(--muted);font-size:.9rem;}
+
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}
+@media(max-width:800px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+.stat-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);}
+.stat-card .label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600;}
+.stat-card .val{font-family:var(--font-mono);font-size:1.5rem;color:var(--navy);margin-top:6px;}
+.badge{display:inline-block;padding:4px 12px;border-radius:999px;font-size:.72rem;font-weight:700;margin-top:6px;}
+.badge.paid{background:#DCFCE7;color:var(--green);}
+.badge.due{background:#FEE2E2;color:var(--red);}
+.badge.open{background:#FEF3C7;color:#B45309;}
+.badge.progress{background:#DBEAFE;color:var(--blue);}
+.badge.resolved{background:#DCFCE7;color:var(--green);}
+
+.grid-2{display:grid;grid-template-columns:2fr 1fr;gap:22px;margin-bottom:26px;}
+@media(max-width:900px){.grid-2{grid-template-columns:1fr;}}
+.card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);}
+.card h3{font-size:1.05rem;margin-bottom:16px;}
+.info-list{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.info-list div{font-size:.85rem;}
+.info-list b{display:block;color:var(--navy);font-family:var(--font-mono);font-size:.95rem;margin-top:2px;}
+.info-list span{color:var(--muted);font-size:.76rem;}
+
+table{width:100%;border-collapse:collapse;font-size:.86rem;}
+th{text-align:left;color:var(--muted);font-weight:600;font-size:.74rem;text-transform:uppercase;letter-spacing:.04em;padding:8px 10px;border-bottom:1.5px solid var(--line);}
+td{padding:12px 10px;border-bottom:1px solid var(--line);}
+tr:last-child td{border-bottom:none;}
+.dl{color:var(--blue);font-weight:600;cursor:pointer;}
+
+.pay-btn{background:var(--amber);color:var(--navy);border:none;padding:12px 20px;border-radius:10px;font-weight:700;font-size:.88rem;cursor:pointer;width:100%;margin-top:10px;}
+.pay-methods{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0;}
+.pay-methods div{border:1px solid var(--line);border-radius:8px;padding:10px 4px;text-align:center;font-size:.68rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s;}
+.pay-methods div:hover, .pay-methods div.sel{border-color:var(--blue);color:var(--blue);background:#EAF1FB;}
+
+.tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+.tab{padding:9px 18px;border-radius:999px;font-size:.85rem;font-weight:600;cursor:pointer;background:#fff;border:1px solid var(--line);color:var(--muted);}
+.tab.active{background:var(--blue);color:#fff;border-color:var(--blue);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+.complaint-form{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+.complaint-form select,.complaint-form input{flex:1;min-width:160px;padding:11px 13px;border:1.5px solid var(--line);border-radius:9px;font-size:.85rem;}
+.complaint-form button{padding:11px 20px;border-radius:9px;border:none;background:var(--blue);color:#fff;font-weight:600;cursor:pointer;}
+
+.notice-item{border-left:3px solid var(--blue);padding:10px 14px;margin-bottom:12px;background:#F8FAFD;border-radius:0 8px 8px 0;}
+.notice-item b{font-size:.86rem;display:block;}
+.notice-item span{font-size:.74rem;color:var(--muted);}
+.notice-tag{font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:6px;background:#EAF1FB;color:var(--blue);margin-left:8px;}
+
+.menu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+@media(max-width:700px){.menu-grid{grid-template-columns:1fr;}}
+.menu-card{background:#F8FAFD;border-radius:10px;padding:14px;}
+.menu-card b{font-size:.8rem;color:var(--blue);}
+.menu-card p{font-size:.82rem;margin-top:4px;color:var(--ink);}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">SB</div>
+    <h2>Tenant Login</h2>
+    <p>Sign in with your registered mobile number.</p>
+    <label>Mobile Number</label>
+    <input type="tel" id="loginMobile" placeholder="10-digit mobile number" value="9876543210">
+    <label>Password</label>
+    <input type="password" id="loginPass" placeholder="Password" value="demo123">
+    <div class="login-error" id="loginError">Invalid mobile number or password.</div>
+    <button class="btn" onclick="login()">Login to Dashboard</button>
+    <div class="login-hint">Demo credentials pre-filled — click Login to preview the dashboard. In production this calls POST /api/auth/tenant/login (JWT).</div>
+    <a href="index.html" class="back-home">← Back to homepage</a>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <div class="topbar">
+    <div class="brand"><div class="mark">SB</div> Tenant Portal</div>
+    <div class="topbar-right">
+      <span style="font-size:.85rem;color:var(--muted);">Hi, <b style="color:var(--navy)">Arun Kumar</b></span>
+      <span class="logout-btn" onclick="logout()">Logout →</span>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="welcome"><h1>Welcome back, Arun 👋</h1><span>Room 204 · Bed 2 · Sri Balaji Men's PG, KPHB</span></div>
+
+    <div class="stat-grid">
+      <div class="stat-card"><div class="label">Monthly Rent</div><div class="val">₹8,000</div></div>
+      <div class="stat-card"><div class="label">Due Amount</div><div class="val" style="color:var(--red)">₹8,000</div></div>
+      <div class="stat-card"><div class="label">Next Due Date</div><div class="val" style="font-size:1.15rem;">05 Aug 2026</div></div>
+      <div class="stat-card"><div class="label">Payment Status</div><div><span class="badge due">Due</span></div></div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3>My Details</h3>
+        <div class="info-list">
+          <div><span>Name</span><b>Arun Kumar</b></div>
+          <div><span>Room Number</span><b>204</b></div>
+          <div><span>Bed Number</span><b>Bed 2</b></div>
+          <div><span>Joining Date</span><b>12 Jan 2026</b></div>
+          <div><span>Monthly Rent</span><b>₹8,000</b></div>
+          <div><span>Security Deposit</span><b>₹8,000</b></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Pay Rent Online</h3>
+        <span style="font-size:.8rem;color:var(--muted)">Choose a payment method</span>
+        <div class="pay-methods">
+          <div class="sel" onclick="selMethod(this)">UPI</div><div onclick="selMethod(this)">PhonePe</div>
+          <div onclick="selMethod(this)">GPay</div><div onclick="selMethod(this)">Paytm</div>
+          <div onclick="selMethod(this)">Card</div><div onclick="selMethod(this)">Net Banking</div>
+          <div onclick="selMethod(this)">Razorpay</div><div onclick="selMethod(this)">Other</div>
+        </div>
+        <button class="pay-btn" onclick="payNow()">Pay ₹8,000 Now</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="payments" onclick="showTab(this,'payments')">Payment History</div>
+      <div class="tab" data-tab="complaints" onclick="showTab(this,'complaints')">Complaints</div>
+      <div class="tab" data-tab="notices" onclick="showTab(this,'notices')">Notice Board</div>
+      <div class="tab" data-tab="menu" onclick="showTab(this,'menu')">Food Menu</div>
+      <div class="tab" data-tab="docs" onclick="showTab(this,'docs')">Documents</div>
+    </div>
+
+    <div class="tab-panel active" id="panel-payments">
+      <div class="card">
+        <h3>Payment History</h3>
+        <table>
+          <thead><tr><th>Month</th><th>Rent</th><th>Paid Date</th><th>Status</th><th>Receipt</th></tr></thead>
+          <tbody id="paymentRows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-complaints">
+      <div class="card">
+        <h3>Raise a Complaint</h3>
+        <div class="complaint-form">
+          <select id="complaintType"><option>Fan not working</option><option>Light issue</option><option>Water issue</option><option>Food issue</option><option>WiFi issue</option><option>Others</option></select>
+          <input type="text" id="complaintNote" placeholder="Describe the issue (optional)">
+          <button onclick="raiseComplaint()">Submit</button>
+        </div>
+        <table>
+          <thead><tr><th>Issue</th><th>Raised On</th><th>Status</th></tr></thead>
+          <tbody id="complaintRows"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-notices">
+      <div class="card"><h3>Notice Board</h3><div id="noticeList"></div></div>
+    </div>
+
+    <div class="tab-panel" id="panel-menu">
+      <div class="card">
+        <h3>This Week's Food Menu (Today)</h3>
+        <div class="menu-grid">
+          <div class="menu-card"><b>Breakfast</b><p>Idli, Sambar, Chutney, Tea</p></div>
+          <div class="menu-card"><b>Lunch</b><p>Rice, Dal, Mixed Veg Curry, Sambar, Curd, Papad</p></div>
+          <div class="menu-card"><b>Dinner</b><p>Chapati, Paneer Curry, Rice, Dal</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-docs">
+      <div class="card">
+        <h3>My Documents</h3>
+        <table>
+          <thead><tr><th>Document</th><th>Uploaded</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Rental Agreement</td><td>12 Jan 2026</td><td class="dl" onclick="alert('Downloads the signed rental agreement PDF.')">Download</td></tr>
+            <tr><td>Aadhaar Card</td><td>12 Jan 2026</td><td class="dl" onclick="alert('Downloads uploaded Aadhaar copy.')">Download</td></tr>
+            <tr><td>PAN Card</td><td>12 Jan 2026</td><td class="dl" onclick="alert('Downloads uploaded PAN copy.')">Download</td></tr>
+            <tr><td>Photo ID</td><td>12 Jan 2026</td><td class="dl" onclick="alert('Downloads uploaded photo.')">Download</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function login(){
+  const m=document.getElementById('loginMobile').value.trim();
+  const p=document.getElementById('loginPass').value.trim();
+  if(m.length>=10 && p.length>=4){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('dashboard').style.display='block';
+    renderAll();
+  }else{
+    document.getElementById('loginError').style.display='block';
+  }
+}
+function logout(){
+  document.getElementById('dashboard').style.display='none';
+  document.getElementById('loginScreen').style.display='flex';
+}
+function selMethod(el){document.querySelectorAll('.pay-methods div').forEach(d=>d.classList.remove('sel'));el.classList.add('sel');}
+function payNow(){alert('Redirecting to secure payment gateway...\n\n(In production this calls POST /api/payments/create-order → Razorpay Checkout → webhook confirms payment → invoice auto-generated.)');}
+
+function showTab(el,name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+}
+
+const payments=[
+  ['Jul 2026','₹8,000','—','Due',null],
+  ['Jun 2026','₹8,000','03 Jun 2026','Paid','#'],
+  ['May 2026','₹8,000','04 May 2026','Paid','#'],
+  ['Apr 2026','₹8,000','02 Apr 2026','Paid','#'],
+  ['Mar 2026','₹8,000','05 Mar 2026','Paid','#'],
+  ['Feb 2026','₹8,000','04 Feb 2026','Paid','#'],
+];
+let complaints=[
+  ['WiFi issue','24 Jul 2026','progress'],
+  ['Fan not working','10 Jun 2026','resolved'],
+];
+const notices=[
+  ['Water Supply Shutdown','Water will be unavailable on 3 Aug from 10 AM–2 PM for tank cleaning.','Maintenance'],
+  ['Independence Day Holiday','Office will remain closed on 15 Aug. Emergency contact available on call.','Holiday'],
+  ['New Weekly Food Menu','Updated food menu has been posted — check the Food Menu tab.','Food'],
+];
+
+function renderAll(){
+  document.getElementById('paymentRows').innerHTML=payments.map(p=>`
+    <tr><td>${p[0]}</td><td>${p[1]}</td><td>${p[2]}</td>
+    <td><span class="badge ${p[3]==='Paid'?'paid':'due'}">${p[3]}</span></td>
+    <td>${p[4]?'<span class="dl" onclick="alert(\'Downloads receipt PDF\')">⬇ Download</span>':'—'}</td></tr>`).join('');
+
+  renderComplaints();
+  document.getElementById('noticeList').innerHTML=notices.map(n=>`
+    <div class="notice-item"><b>${n[0]}<span class="notice-tag">${n[2]}</span></b><span>${n[1]}</span></div>`).join('');
+}
+function renderComplaints(){
+  document.getElementById('complaintRows').innerHTML=complaints.map(c=>`
+    <tr><td>${c[0]}</td><td>${c[1]}</td><td><span class="badge ${c[2]}">${c[2]==='progress'?'In Progress':c[2].charAt(0).toUpperCase()+c[2].slice(1)}</span></td></tr>`).join('');
+}
+function raiseComplaint(){
+  const type=document.getElementById('complaintType').value;
+  const today=new Date().toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+  complaints.unshift([type,today,'open']);
+  renderComplaints();
+  document.getElementById('complaintNote').value='';
+}
+</script>
+</body>
+</html>
