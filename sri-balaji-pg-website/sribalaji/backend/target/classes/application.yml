@@ -11,8 +11,8 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-    username: ${DB_USER:root}
-    password: ${DB_PASSWORD:Pramodmsd@777}
+    username: ${DB_USER:neondb_owner}
+    password: ${DB_PASSWORD:npg_LeJujrVbRz14}
   jpa:
     hibernate:
       ddl-auto: update
