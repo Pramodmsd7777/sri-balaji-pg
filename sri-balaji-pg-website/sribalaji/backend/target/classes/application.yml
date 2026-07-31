@@ -1,18 +1,13 @@
-
 server:
   port: ${PORT:8080}
 
 spring:
   datasource:
-    url: ${DATABASE_URL}
-    driver-class-name: org.postgresql.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+    url: ${DATABASE_URL:jdbc:postgresql://ep-lucky-frost-axddvb9u-pooler.c-4.us-east-2.aws.neon.tech/neondb?sslmode=require}
     username: ${DB_USER:neondb_owner}
     password: ${DB_PASSWORD:npg_LeJujrVbRz14}
+    driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -22,15 +17,15 @@ spring:
         format_sql: true
 
 jwt:
-  secret: ${JWT_SECRET:change-this-to-a-long-random-secret-in-production}
-  expiration-ms: 86400000   # 24 hours
+  secret: ${JWT_SECRET}
+  expiration-ms: 86400000
 
 razorpay:
-  key-id: ${RAZORPAY_KEY_ID:rzp_test_xxxxxxxx}
-  key-secret: ${RAZORPAY_KEY_SECRET:xxxxxxxxxxxxxxxx}
+  key-id: ${RAZORPAY_KEY_ID}
+  key-secret: ${RAZORPAY_KEY_SECRET}
 
 cloudinary:
-  url: ${CLOUDINARY_URL:cloudinary://<api_key>:<api_secret>@<cloud_name>}
+  url: ${CLOUDINARY_URL}
 
 cors:
-  allowed-origins: ${ALLOWED_ORIGINS:http://localhost:5173}
+  allowed-origins: ${ALLOWED_ORIGINS}
