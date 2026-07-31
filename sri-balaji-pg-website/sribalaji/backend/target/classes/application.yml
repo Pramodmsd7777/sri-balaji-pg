@@ -1,9 +1,16 @@
+
 server:
-  port: 8080
+  port: ${PORT:8080}
 
 spring:
   datasource:
-    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:sribalaji_pg}?useSSL=false&serverTimezone=UTC
+    url: ${DATABASE_URL}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
     username: ${DB_USER:root}
     password: ${DB_PASSWORD:Pramodmsd@777}
   jpa:
