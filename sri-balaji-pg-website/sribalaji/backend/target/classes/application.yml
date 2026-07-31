@@ -17,7 +17,7 @@ spring:
         format_sql: true
 
 jwt:
-  secret: ${JWT_SECRET}
+  secret: ${SriBalajiPG@2026#JWT$Secret!1234567}
   expiration-ms: 86400000
 
 razorpay:
