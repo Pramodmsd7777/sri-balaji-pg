@@ -28,4 +28,4 @@ cloudinary:
   url: ${CLOUDINARY_URL}
 
 cors:
-  allowed-origins: ${ALLOWED_ORIGINS}
+  allowed-origins: ${ALLOWED_ORIGINS:http://localhost:5173}
