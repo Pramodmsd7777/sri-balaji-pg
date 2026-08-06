@@ -5,6 +5,7 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.time.YearMonth;
 
+
 @Entity
 @Table(name = "payments")
 @Data
@@ -15,8 +16,7 @@ public class Payment {
     @ManyToOne
     @JoinColumn(name = "tenant_id")
     private Tenant tenant;
-
-    private YearMonth billingMonth;
+    private String billingMonth;
     private Double amount;
 
     @Enumerated(EnumType.STRING)

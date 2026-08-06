@@ -1,4 +1,4 @@
-package com.sribalajipg.config;
+package com.sribalajipg.controller;
 
 import com.sribalajipg.entity.Role;
 import com.sribalajipg.entity.User;

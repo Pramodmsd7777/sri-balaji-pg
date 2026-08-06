@@ -399,13 +399,13 @@ footer ul li a:hover{color:#fff;}
         </ul>
         <form id="contactForm">
           <div class="form-row">
-            <div><label>Full Name</label><input type="text" required placeholder="Your name"></div>
-            <div><label>Phone Number</label><input type="tel" required placeholder="10-digit mobile"></div>
+            <div><label>Full Name</label><input type="text" name="name" required placeholder="Your name"></div>
+            <div><label>Phone Number</label><input type="tel" name="phone" required placeholder="10-digit mobile"></div>
           </div>
           <div style="margin-bottom:14px;"><label>Preferred Sharing</label>
-            <select><option>2 Sharing - ₹9,000</option><option>3 Sharing - ₹8,000</option><option>4 Sharing - ₹7,500</option><option>5 Sharing - ₹7,000</option></select>
+            <select name="sharing"><option>2 Sharing - ₹9,000</option><option>3 Sharing - ₹8,000</option><option>4 Sharing - ₹7,500</option><option>5 Sharing - ₹7,000</option></select>
           </div>
-          <div style="margin-bottom:18px;"><label>Message</label><textarea placeholder="Tell us when you'd like to move in..."></textarea></div>
+          <div style="margin-bottom:18px;"><label>Message</label><textarea name="message" placeholder="Tell us when you'd like to move in..."></textarea></div>
           <button type="submit" class="btn btn-blue" style="width:100%;justify-content:center;">Send Enquiry</button>
         </form>
       </div>
@@ -485,10 +485,31 @@ document.getElementById('nearbyGrid').innerHTML=nearby.map(n=>`<div class="nearb
 document.querySelectorAll('.nearby-card').forEach(el=>io.observe(el));
 
 // contact form (demo - wire to backend API in production)
-document.getElementById('contactForm').addEventListener('submit',function(e){
+document.getElementById('contactForm').addEventListener('submit', function(e) {
   e.preventDefault();
-  alert('Thanks for your enquiry! Our team will call you back shortly.\n\n(Connect this form to /api/enquiries on the backend to make it live.)');
-  this.reset();
+
+  const formData = new FormData(this);
+  const payload = {
+    name: formData.get('name'),
+    phone: formData.get('phone'),
+    email: '',
+    message: `Sharing preference: ${formData.get('sharing')}. ${formData.get('message') || ''}`
+  };
+
+  fetch('http://localhost:8080/api/public/enquiries', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  })
+    .then(response => response.json())
+    .then(data => {
+      alert(data.message || 'Thanks for your enquiry! Our team will call you back shortly.');
+      document.getElementById('contactForm').reset();
+    })
+    .catch(error => {
+      console.error('Enquiry submission failed:', error);
+      alert('Something went wrong. Please try calling or WhatsApp us directly.');
+    });
 });
 </script>
 </body>

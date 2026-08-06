@@ -29,10 +29,10 @@ public class PaymentController {
         this.paymentRepository = paymentRepository;
     }
 
-    @GetMapping("/tenant/{tenantId}")
-    public List<Payment> history(@PathVariable Long tenantId) {
-        return paymentRepository.findByTenantId(tenantId);
-    }
+   @GetMapping("/tenant/{tenantId}")
+public List<Payment> history(@PathVariable Long tenantId) {
+    return paymentRepository.findByTenant_Id(tenantId);
+}
 
     @GetMapping("/pending")
     public List<Payment> pending() {
